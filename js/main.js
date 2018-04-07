@@ -35,7 +35,7 @@ $(document).ready(function() {
 
     /* ======= Chart ========= */
 
-    $('.chart').easyPieChart({
+    /*$('.chart').easyPieChart({
 		barColor:'#00BCD4',//Pie chart colour
 		trackColor: '#e8e8e8',
 		scaleColor: false,
@@ -44,7 +44,7 @@ $(document).ready(function() {
 		onStep: function(from, to, percent) {
 			$(this.el).find('span').text(Math.round(percent));
 		}
-	});
+	});*/
 
 
 
