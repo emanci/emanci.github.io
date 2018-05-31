@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://questocat.com/"/>
-  <updated>2018-05-31T15:44:35.551Z</updated>
+  <updated>2018-05-31T15:47:55.585Z</updated>
   <id>http://questocat.com/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>如何在 Laravel 策略中使用自定义身份验证提供器</title>
+    <link href="http://questocat.com//blog/2018/05/31/use-custom-auth-guards-for-policy.html"/>
+    <id>http://questocat.com//blog/2018/05/31/use-custom-auth-guards-for-policy.html</id>
+    <published>2018-05-30T16:00:00.000Z</published>
+    <updated>2018-05-31T15:47:55.585Z</updated>
+    
+    <content type="html"><![CDATA[<p>策略是在特定模型或者资源中组织授权逻辑的类。默认情况下，Laravel 是将 User 实例注入到模型中的，那么现在我们需要注入自定义的 Administrator 应该怎么做呢？</p><a id="more"></a><p>首先，我们控制器基类中改写授权方法 authorize：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">AuthorizesRequests</span> &#123;</span><br><span class="line">        <span class="title">authorize</span> <span class="title">as</span> <span class="title">protected</span> <span class="title">baseAuthorize</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> mixed $ability</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> array $arguments</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> \Illuminate\Auth\Access\Response|void</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@throws</span> \Illuminate\Auth\Access\AuthorizationException</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">authorize</span><span class="params">($ability, $arguments = [])</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Auth::guard(<span class="string">'admin'</span>)-&gt;check()) &#123;</span><br><span class="line">            Auth::shouldUse(<span class="string">'admin'</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;baseAuthorize($ability, $arguments);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><p>现在，我们可以直接在授权策略类中定义我们自己的方法来实现授权：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostPolicy</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">HandlesAuthorization</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span><span class="params">(Administrator $admin, Post $post)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;策略是在特定模型或者资源中组织授权逻辑的类。默认情况下，Laravel 是将 User 实例注入到模型中的，那么现在我们需要注入自定义的 Administrator 应该怎么做呢？&lt;/p&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Composer 的 minimum-stability 属性</title>
+    <link href="http://questocat.com//blog/2018/05/30/composer-properties-minimum-stability.html"/>
+    <id>http://questocat.com//blog/2018/05/30/composer-properties-minimum-stability.html</id>
+    <published>2018-05-29T16:00:00.000Z</published>
+    <updated>2018-05-31T15:47:46.786Z</updated>
+    
+    <content type="html"><![CDATA[<p>我们知道 Composer 在安装依赖包的时候会对版本进行稳定性检查，而低于 <code>minimum-stability</code> 所设定的最低稳定性的版本，将在解决依赖关系时被忽略。</p><a id="more"></a><p>例如，现在我们需要在项目中依赖一个尚未发布稳定版本的包时候，通常会这样引入包的版本设定：<code>“vendor/package”: “*”,</code> 那么问题来了，当我们执行 <code> composer install</code> 或者 <code>composer update</code> 的时候就会出错。</p><p>问题出在哪里呢？</p><p>我们一般不会在 composer.json 中显示设置 <code>minimum-stability</code> 的值，因为在默认情况下，<code>minimum-stability</code> 的值为 <code>stable</code>，而这通常符合我们的要求，所以现在就可以理解为什么不能安装成功了。</p><p>解决这个问题，我们通常有两种方式：</p><p>一、降低 minimum-stability 所设定的最低稳定性的版本：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"minimum-stability"</span>: <span class="string">"dev"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>看上去问题好像解决了，但是引入了更大的问题，那就是其他的依赖包也会去尝试安装还在开发中的版本，而这是我们不能接受的。这个时候，我们就需要引入 Composer 提供的另一个属性：<code>prefer-stable</code>。当 <code>prefer-stable</code> 的值设置为 true 时，Composer 将优先使用更稳定的包版本。</p><p>现在 composer.json 看起来是这样的：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"minimum-stability"</span>: <span class="string">"dev"</span>,</span><br><span class="line">    <span class="attr">"prefer-stable"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>某些情况下，我们将 <code>prefer-stable: true</code> 与 <code>minimum-stability: dev</code> 结合使用，能够防止所有的包更新到开发版本，但这种方式不是必要的时候一般不使用。</p><p>二、重新指定依赖包的版本（推荐）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require vendor/package=dev-master</span><br></pre></td></tr></table></figure></p><p>当然了，使用 @dev 也是可以的。</p><p>现在，我们再尝试执行 <code> composer install</code> 或者 <code>composer update</code> 就成功了。</p><h5 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h5><p><a href="http://docs.phpcomposer.com/04-schema.html#minimum-stability" target="_blank" rel="noopener">minimum-stability</a><br><a href="http://docs.phpcomposer.com/04-schema.html#prefer-stable" target="_blank" rel="noopener">prefer-stable</a></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;我们知道 Composer 在安装依赖包的时候会对版本进行稳定性检查，而低于 &lt;code&gt;minimum-stability&lt;/code&gt; 所设定的最低稳定性的版本，将在解决依赖关系时被忽略。&lt;/p&gt;
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>Composer 扩展包开发</title>
@@ -46,42 +82,6 @@
     <summary type="html">
     
       &lt;p&gt;BBR 的作用就是加速 TCP，尽可能的充分利用带宽；降低 buffer 占用率，从而降低延迟。&lt;/p&gt;
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>如何在 Laravel 策略中使用自定义身份验证提供器</title>
-    <link href="http://questocat.com//blog/2017/05/31/use-custom-auth-guards-for-policy.html"/>
-    <id>http://questocat.com//blog/2017/05/31/use-custom-auth-guards-for-policy.html</id>
-    <published>2017-05-30T16:00:00.000Z</published>
-    <updated>2018-05-31T15:40:46.597Z</updated>
-    
-    <content type="html"><![CDATA[<p>策略是在特定模型或者资源中组织授权逻辑的类。默认情况下，Laravel 是将 User 实例注入到模型中的，那么现在我们需要注入自定义的 Administrator 应该怎么做呢？</p><a id="more"></a><p>首先，我们控制器基类中改写授权方法 authorize：</p><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">AuthorizesRequests</span> &#123;</span><br><span class="line">        <span class="title">authorize</span> <span class="title">as</span> <span class="title">protected</span> <span class="title">baseAuthorize</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> mixed $ability</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> array $arguments</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> \Illuminate\Auth\Access\Response|void</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@throws</span> \Illuminate\Auth\Access\AuthorizationException</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">authorize</span><span class="params">($ability, $arguments = [])</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Auth::guard(<span class="string">'admin'</span>)-&gt;check()) &#123;</span><br><span class="line">            Auth::shouldUse(<span class="string">'admin'</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;baseAuthorize($ability, $arguments);</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure><p>现在，我们可以直接在授权策略类中定义我们自己的方法来实现授权：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PostPolicy</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">use</span> <span class="title">HandlesAuthorization</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">update</span><span class="params">(Administrator $admin, Post $post)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;策略是在特定模型或者资源中组织授权逻辑的类。默认情况下，Laravel 是将 User 实例注入到模型中的，那么现在我们需要注入自定义的 Administrator 应该怎么做呢？&lt;/p&gt;
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Composer 的 minimum-stability 属性</title>
-    <link href="http://questocat.com//blog/2017/05/30/composer-properties-minimum-stability.html"/>
-    <id>http://questocat.com//blog/2017/05/30/composer-properties-minimum-stability.html</id>
-    <published>2017-05-29T16:00:00.000Z</published>
-    <updated>2018-05-31T08:45:28.437Z</updated>
-    
-    <content type="html"><![CDATA[<p>我们知道 Composer 在安装依赖包的时候会对版本进行稳定性检查，而低于 <code>minimum-stability</code> 所设定的最低稳定性的版本，将在解决依赖关系时被忽略。</p><a id="more"></a><p>例如，现在我们需要在项目中依赖一个尚未发布稳定版本的包时候，通常会这样引入包的版本设定：<code>“vendor/package”: “*”,</code> 那么问题来了，当我们执行 <code> composer install</code> 或者 <code>composer update</code> 的时候就会出错。</p><p>问题出在哪里呢？</p><p>我们一般不会在 composer.json 中显示设置 <code>minimum-stability</code> 的值，因为在默认情况下，<code>minimum-stability</code> 的值为 <code>stable</code>，而这通常符合我们的要求，所以现在就可以理解为什么不能安装成功了。</p><p>解决这个问题，我们通常有两种方式：</p><p>一、降低 minimum-stability 所设定的最低稳定性的版本：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"minimum-stability"</span>: <span class="string">"dev"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>看上去问题好像解决了，但是引入了更大的问题，那就是其他的依赖包也会去尝试安装还在开发中的版本，而这是我们不能接受的。这个时候，我们就需要引入 Composer 提供的另一个属性：<code>prefer-stable</code>。当 <code>prefer-stable</code> 的值设置为 true 时，Composer 将优先使用更稳定的包版本。</p><p>现在 composer.json 看起来是这样的：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"minimum-stability"</span>: <span class="string">"dev"</span>,</span><br><span class="line">    <span class="attr">"prefer-stable"</span>: <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>某些情况下，我们将 <code>prefer-stable: true</code> 与 <code>minimum-stability: dev</code> 结合使用，能够防止所有的包更新到开发版本，但这种方式不是必要的时候一般不使用。</p><p>二、重新指定依赖包的版本（推荐）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require vendor/package=dev-master</span><br></pre></td></tr></table></figure></p><p>当然了，使用 @dev 也是可以的。</p><p>现在，我们再尝试执行 <code> composer install</code> 或者 <code>composer update</code> 就成功了。</p><h5 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h5><p><a href="http://docs.phpcomposer.com/04-schema.html#minimum-stability" target="_blank" rel="noopener">minimum-stability</a><br><a href="http://docs.phpcomposer.com/04-schema.html#prefer-stable" target="_blank" rel="noopener">prefer-stable</a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;我们知道 Composer 在安装依赖包的时候会对版本进行稳定性检查，而低于 &lt;code&gt;minimum-stability&lt;/code&gt; 所设定的最低稳定性的版本，将在解决依赖关系时被忽略。&lt;/p&gt;
     
     </summary>
     
