@@ -53,7 +53,9 @@ ga('send', 'pageview');
 
     <section>
         <!-- content -->
-        <h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><p>最近在开发一个比较独立的功能，因此打算使用 Composer 来实现模块化开发。这里有个要求，开发人员在本地开发完成某个模块后，能够快速地部署到测试环境，让测试人员进行测试。</p>
+        <p>最近在开发一个比较独立的功能，考虑到重用、科学版本管理等要求，因此使用 Composer 来实现模块化开发。</p>
+<a id="more"></a>
+<p>考虑到开发和测试的时间成本，这里还有个要求，开发人员在本地开发完成某个模块后，能够快速地部署到测试环境，让测试人员进行测试。</p>
 <h5 id="实现上面的要求需要满足"><a href="#实现上面的要求需要满足" class="headerlink" title="实现上面的要求需要满足"></a>实现上面的要求需要满足</h5><ul>
 <li>本地开发时需要方便快速修改</li>
 <li>测试时方便更新最新代码</li>
@@ -66,7 +68,7 @@ ga('send', 'pageview');
 <p>然后我们在项目中添加包依赖：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"require"</span>: &#123;</span><br><span class="line">        <span class="attr">"organization-name/my-package"</span>: <span class="string">"@dev"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h5 id="如何在测试环境中使用"><a href="#如何在测试环境中使用" class="headerlink" title="如何在测试环境中使用"></a>如何在测试环境中使用</h5><p>同样地，在 composer.json 的 repositories 区块中添加一个项目源（我们扩展包代码的地址）：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"repositories"</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">"type"</span>: <span class="string">"vcs"</span>,</span><br><span class="line">            <span class="attr">"url"</span>: <span class="string">"git@10.1.2.215:/home/git/repo/composer_repo/my-package.git"</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>然后我们在项目中添加包依赖：<br><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"require"</span>: &#123;</span><br><span class="line">        <span class="attr">"organization-name/my-package"</span>: <span class="string">"@dev"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>现在，当我们在本地开发完成某个模块后，可以通过 GIT 方式将代码提交到代码库，然后测试服务器更新最近提交的代码，测试人员就可以测试最新的功能了。</p>
+<p>现在，当我们在本地开发完成某个模块后，可以通过 Git 方式将代码提交到代码库，然后测试服务器更新最近提交的代码，测试人员就可以测试最新的功能了。</p>
 
     </section>
 
