@@ -46,8 +46,8 @@ ga('send', 'pageview');
         <a href="/" class="backLink">&laquo; Back to article overview.</a>
         <h1>Composer 的 minimum-stability 属性</h1>
         <!-- time -->
-        <time datetime="2018-05-30" pubdate>
-            30. May 2018
+        <time datetime="2017-05-18" pubdate>
+            18. May 2017
         </time>
     </header>
 
@@ -65,8 +65,11 @@ ga('send', 'pageview');
 <p>某些情况下，我们将 <code>prefer-stable: true</code> 与 <code>minimum-stability: dev</code> 结合使用，能够防止所有的包更新到开发版本，但这种方式不是必要的时候一般不使用。</p>
 <p>二、重新指定依赖包的版本（推荐）<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require vendor/package=dev-master</span><br></pre></td></tr></table></figure></p>
 <p>当然了，使用 @dev 也是可以的。</p>
-<p>现在，我们再尝试执行 <code> composer install</code> 或者 <code>composer update</code> 就成功了。</p>
-<h5 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h5><p><a href="http://docs.phpcomposer.com/04-schema.html#minimum-stability" target="_blank" rel="noopener">minimum-stability</a><br><a href="http://docs.phpcomposer.com/04-schema.html#prefer-stable" target="_blank" rel="noopener">prefer-stable</a></p>
+<p>现在，我们再尝试执行 <code> composer install</code> 或者 <code>composer update</code> 就可以成功了。<br><br></p>
+<h5 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h5><ul>
+<li><a href="http://docs.phpcomposer.com/04-schema.html#minimum-stability" target="_blank" rel="noopener">minimum-stability</a></li>
+<li><a href="http://docs.phpcomposer.com/04-schema.html#prefer-stable" target="_blank" rel="noopener">prefer-stable</a></li>
+</ul>
 
     </section>
 
@@ -76,8 +79,8 @@ ga('send', 'pageview');
     <div id="disqus_thread"></div>
     <script type="text/javascript">
         var disqus_shortname = 'philzc';
-        var disqus_url = 'http://questocat.com/blog/2018/05/30/composer-properties-minimum-stability.html';
-        var disqus_identifier = '/blog/2018/05/30/composer-properties-minimum-stability.html';
+        var disqus_url = 'http://questocat.com/blog/2017/05/18/composer-properties-minimum-stability.html';
+        var disqus_identifier = '/blog/2017/05/18/composer-properties-minimum-stability.html';
         (function() {
             var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
             dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
