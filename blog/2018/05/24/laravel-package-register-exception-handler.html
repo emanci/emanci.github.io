@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <!-- head -->
+    <head>
+    <meta charset="UTF-8" />
+    <title>
+        
+            如何在 Laravel 扩展包中注册自定义 Exception Handler｜Questocat&#39;s Blog
+        
+    </title>
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/highlight.css">
+    
+    <link rel="alternate" href="/atom.xml" title="Questocat&#39;s Blog" type="application/atom+xml">
+    
+    <!-- analytics -->
+    
+    <!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-119958043-1', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+
+</head>
+
+    <body>
+        <!-- header -->
+        <header>
+    Blog by <strong>QUESTOCAT</strong>.
+    Find me on <a href="https://github.com/questocat">GitHub</a>,
+    Learn more <a href="/about">about me</a>.
+</header>
+
+
+        <!-- content -->
+        <section class="post">
+    <header>
+        <a href="/" class="backLink">&laquo; Back to article overview.</a>
+        <h1>如何在 Laravel 扩展包中注册自定义 Exception Handler</h1>
+        <!-- time -->
+        <time datetime="2018-05-24" pubdate>
+            24. May 2018
+        </time>
+    </header>
+
+    <section>
+        <!-- content -->
+        <p>公司有一个 Laravel 的扩展包，我们希望在这个扩展包中能够单独对异常进行处理，但是又不影响整个应用对异常的处理方式（也就是不希望影响到 <code>App\Exceptions\Handler</code> 对异常的处理逻辑）。<br><a id="more"></a><br>我们知道，Laravel 默认注册了一个异常处理 Handler 单例（app.php）,而我们对扩展包的异常处理肯定不可能在 App\Exceptions\Handler 中去修改，看上似乎无解了。直到我在 Laraval API 文档中发现 Container 提供的一个 extend 方法，追进去看了一下源码，看上去好像可以满足我的需求，那赶快来试一下吧。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.php</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$app-&gt;singleton(</span><br><span class="line">    Illuminate\Contracts\Debug\ExceptionHandler::class,</span><br><span class="line">    App\Exceptions\Handler::class</span><br><span class="line">);</span><br></pre></td></tr></table></figure></p>
+<p>首先，我们先在扩展包的 xxxProvider 中注册异常处理 Handler（也许叫扩展默认异常处理 Handler 更准确）：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">extendExceptionHandler</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;app-&gt;extend(\Illuminate\Contracts\Debug\ExceptionHandler::class, <span class="function"><span class="keyword">function</span> <span class="params">($handler, $app)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> CustomExceptionHandler($handler);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后，我们创建这个自定义异常处理 Handler 类，因为我使用的是 Laravel，这里我们继承 Illuminate\Foundation\Exceptions\Handler（如果是在 Lumen 中，则继承 Laravel\Lumen\Exceptions\Handler）：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CustomExceptionHandler.php</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Exception</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Foundation</span>\<span class="title">Exceptions</span>\<span class="title">Handler</span> <span class="title">as</span> <span class="title">BaseExceptionHandler</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Illuminate</span>\<span class="title">Contracts</span>\<span class="title">Debug</span>\<span class="title">ExceptionHandler</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomExceptionHandler</span> <span class="keyword">extends</span> <span class="title">BaseExceptionHandler</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> ExceptionHandler</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $handler;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * CustomExceptionHandler constructor.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  ExceptionHandler $handler</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">(ExceptionHandler $handler)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;handler  = $handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Report or log an exception.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * This is a great spot to send exceptions to Sentry, Bugsnag, etc.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  \Exception  $exception</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">report</span><span class="params">(Exception $exception)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">        <span class="keyword">if</span> (condition) &#123;</span><br><span class="line">            <span class="comment">// code</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;handler-&gt;report($exception);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Render an exception into an HTTP response.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  \Illuminate\Http\Request  $request</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  \Exception  $exception</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> \Illuminate\Http\Response</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">($request, Exception $exception)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// do something</span></span><br><span class="line">        <span class="keyword">if</span> (condition) &#123;</span><br><span class="line">            <span class="comment">// code</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;handler-&gt;render($request, $exception);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在我们可以在 CustomExceptionHandler 类中的 report 和 render 方法中处理我们扩展包的异常处理逻辑，然后不满足我们条件的就交给应用程序默认的 Exception Handler 去处理。</p>
+
+    </section>
+
+    <footer>
+    <!-- comments -->
+    <div class="comments">
+    
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'philzc';
+    var disqus_url = 'http://questocat.com/blog/2018/05/24/laravel-package-register-exception-handler.html';
+    var disqus_identifier = '/blog/2018/05/24/laravel-package-register-exception-handler.html';
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    
+</div>
+
+</footer>
+
+</section>
+
+
+        <!-- js -->
+        <script src="/js/anchor.js"></script>
+
+        <script>
+            anchors.add('h2, h3');
+        </script>
+    </body>
+</html>
+
